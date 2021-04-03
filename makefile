@@ -4,7 +4,7 @@ IMAGE_NAME ?= node
 IMAGE_TAG ?= latest
 
 # List of all images
-IMAGES := node go
+IMAGES := node go dotnet python
 
 .PHONY: image image-all push push-all
 .DEFAULT_GOAL := help
