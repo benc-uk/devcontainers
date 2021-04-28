@@ -7,23 +7,21 @@ IMAGE_BASE ?= mcr.microsoft.com/vscode/devcontainers/go:1.16
 IMAGE_USER ?= vscode
 IMAGE_USERHOME ?= /home/vscode
 
-.PHONY: image push node go python dotnet java push-all
-.DEFAULT_GOAL := help
+.PHONY: image push node node-root go python dotnet java
 
-help:  ## 💬 This help message
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
-image:  ## 🔨 Build container image from Dockerfile 
+image:
 	docker build . --file Dockerfile \
 	--tag $(IMAGE_REG)/$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG) \
 	--build-arg BASE=$(IMAGE_BASE) --build-arg user=$(IMAGE_USER) --build-arg userhome=$(IMAGE_USERHOME)
 
-push:  ## 📤 Push container image to registry 
+push:
 	docker push $(IMAGE_REG)/$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
+# The base image doesn't use vscode as a non-root user, which is a fricken pain in the bum
 node:
 	make image IMAGE_NAME=node IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/javascript-node:14 IMAGE_USER=node IMAGE_USERHOME=/home/node
 
+# So we need this special case for the node root image, arrrgh
 node-root:
 	make image IMAGE_NAME=node IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/javascript-node:14 IMAGE_USER=root IMAGE_USERHOME=/root IMAGE_TAG=root
 

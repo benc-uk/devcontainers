@@ -2,6 +2,11 @@ name: CI Build All Images
 
 on:
   push:
+    paths:
+      - ".github/workflows/**"
+      - "scripts/**"
+      - "Dockerfile"
+      - "makefile"
   workflow_dispatch:
 
 jobs:
