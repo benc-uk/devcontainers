@@ -1,29 +1,36 @@
 #!/bin/bash
 
-cd /tmp
+cd /tmp || true
 git clone https://github.com/benc-uk/tools-install.git
-mkdir -p $HOME/.local/bin
 
 CODENAME=$(lsb_release -cs)
+NODE_VERSION=node_14.x
+TERRAFORM_VERSION=0.15.1
 export DEBIAN_FRONTEND=noninteractive 
 
-# Binary installed tools
+# Tools installed as simple binaries, without apt
 ./tools-install/docker-client.sh 
 ./tools-install/helm.sh 
 ./tools-install/kube-tools.sh 
+./tools-install/terraform.sh $TERRAFORM_VERSION
+./tools-install/bicep.sh 
+./tools-install/kubectl.sh 
+./tools-install/gh.sh 
 
-# Add apt repos for kubectl, gh and azure-cli
-curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $CODENAME main" > /etc/apt/sources.list.d/azure-cli.list
-echo "deb https://cli.github.com/packages/ $CODENAME main" > /etc/apt/sources.list.d/github-cli.list
+# Add apt repo for Azure CLI
+curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $CODENAME main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
 
-# Install kubectl gh azure-cli
-apt-get update
-apt-get install -y kubectl gh azure-cli
+# Add apt repo for Node.js
+curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add -
+echo "deb https://deb.nodesource.com/$NODE_VERSION $CODENAME main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+echo "deb-src https://deb.nodesource.com/$NODE_VERSION $CODENAME main" | sudo tee -a /etc/apt/sources.list.d/nodesource.list
 
-# Node installed as standard using nvm, Node used by so many things
-\. "$NVM_DIR/nvm.sh"
-nvm install --lts
+# Install Azure CLI and Node.js, make is missing from some base images
+sudo apt-get update -qq
+sudo apt-get install -y azure-cli nodejs make
+
+# Update NPM and allow NPM to work without root/sudo
+mkdir -p "$HOME/.npm-global"
+npm config set prefix "$HOME/.npm-global"
+npm install -g npm

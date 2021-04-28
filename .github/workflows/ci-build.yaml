@@ -9,10 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: make image-all
+      # Non root
+      - run: make all
+      # Root
+      - run: make all IMAGE_USER=root IMAGE_USERHOME=/root IMAGE_TAG=root
       - uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # Non root
       - run: make push-all
+      # Root
+      - run: make push-all IMAGE_TAG=root
