@@ -7,7 +7,7 @@ IMAGE_BASE ?= mcr.microsoft.com/vscode/devcontainers/go:1.16
 IMAGE_USER ?= vscode
 IMAGE_USERHOME ?= /home/vscode
 
-.PHONY: image push all all-root push-all
+.PHONY: image push node go python dotnet java push-all
 .DEFAULT_GOAL := help
 
 help:  ## 💬 This help message
@@ -21,11 +21,19 @@ image:  ## 🔨 Build container image from Dockerfile
 push:  ## 📤 Push container image to registry 
 	docker push $(IMAGE_REG)/$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-all:  ## 🔨 Build ALL container images
+node:
 	make image IMAGE_NAME=node IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/javascript-node:14 IMAGE_USER=node IMAGE_USERHOME=/home/node
+
+go:
 	make image IMAGE_NAME=go IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/go:1.16
+
+python:
 	make image IMAGE_NAME=python IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/python:3.9
+
+dotnet:
 	make image IMAGE_NAME=dotnet IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/dotnetcore:5.0
+
+java:
 	make image IMAGE_NAME=java IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/java:11
 
 push-all:  ## 📤 Push ALL container images to registry 

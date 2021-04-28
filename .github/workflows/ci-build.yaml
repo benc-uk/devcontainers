@@ -7,18 +7,22 @@ jobs:
   build:
     name: "Build & Push Images"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: ["node", "java", "go", "python", "dotnet"]
+
     steps:
       - uses: actions/checkout@v2
       # Non root
-      - run: make all
+      - run: make ${{ matrix.name }}
       # Root
-      - run: make all IMAGE_USER=root IMAGE_USERHOME=/root IMAGE_TAG=root
+      - run: make ${{ matrix.name }} IMAGE_USER=root IMAGE_USERHOME=/root IMAGE_TAG=root
       - uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       # Non root
-      - run: make push-all
+      - run: make push IMAGE_NAME=${{ matrix.name }}
       # Root
-      - run: make push-all IMAGE_TAG=root
+      - run: make push IMAGE_NAME=${{ matrix.name }} IMAGE_TAG=root
