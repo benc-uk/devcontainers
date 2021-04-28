@@ -2,14 +2,15 @@ name: CI Build All Images
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-images:
     name: "Build & Push Images"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: ["node", "java", "go", "python", "dotnet"]
+        name: ["java", "go", "python", "dotnet"]
 
     steps:
       - uses: actions/checkout@v2
@@ -26,3 +27,23 @@ jobs:
       - run: make push IMAGE_NAME=${{ matrix.name }}
       # Root
       - run: make push IMAGE_NAME=${{ matrix.name }} IMAGE_TAG=root
+
+  build-node-image:
+    name: "Build & Push Node Image"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      # Non root
+      - run: make node
+      # Root
+      - run: make node-root
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Non root
+      - run: make push IMAGE_NAME=node
+      # Root
+      - run: make push IMAGE_NAME=node IMAGE_TAG=root

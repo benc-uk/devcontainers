@@ -24,6 +24,9 @@ push:  ## 📤 Push container image to registry
 node:
 	make image IMAGE_NAME=node IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/javascript-node:14 IMAGE_USER=node IMAGE_USERHOME=/home/node
 
+node-root:
+	make image IMAGE_NAME=node IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/javascript-node:14 IMAGE_USER=root IMAGE_USERHOME=/root IMAGE_TAG=root
+
 go:
 	make image IMAGE_NAME=go IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/go:1.16
 
@@ -35,10 +38,3 @@ dotnet:
 
 java:
 	make image IMAGE_NAME=java IMAGE_BASE=mcr.microsoft.com/vscode/devcontainers/java:11
-
-push-all:  ## 📤 Push ALL container images to registry 
-	make push IMAGE_NAME=node
-	make push IMAGE_NAME=go
-	make push IMAGE_NAME=python
-	make push IMAGE_NAME=dotnet
-	make push IMAGE_NAME=java
