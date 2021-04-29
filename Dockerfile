@@ -20,7 +20,7 @@ RUN ./install.sh && rm install.sh
 # Set UK London as timezone
 ARG timeZone=Europe/London
 RUN sudo ln -snf /usr/share/zoneinfo/$timeZone /etc/localtime \
-    && sudo echo $timeZone > /etc/timezone
+    && echo $timeZone sudo tee /etc/timezone
 
 # It's better than bash
 ENTRYPOINT [ "zsh" ]
