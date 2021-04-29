@@ -1,10 +1,12 @@
 #!/bin/bash
 
+# Grab my install script repo
 cd /tmp || true
 git clone https://github.com/benc-uk/tools-install.git
 
 CODENAME=$(lsb_release -cs)
 NODE_VERSION=node_14.x
+# Have to fix terraform version as latest release on GitHub can be older version
 TERRAFORM_VERSION=0.15.1
 export DEBIAN_FRONTEND=noninteractive 
 
@@ -31,6 +33,7 @@ sudo apt-get update -qq
 sudo apt-get install -y azure-cli nodejs make
 
 # Update NPM and allow NPM to work without root/sudo
+# This is done as using nvm caused some issues
 mkdir -p "$HOME/.npm-global"
 npm config set prefix "$HOME/.npm-global"
 npm install -g npm

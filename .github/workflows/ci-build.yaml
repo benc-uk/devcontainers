@@ -15,40 +15,23 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: ["java", "go", "python", "dotnet"]
+        name: ["node", "java", "go", "python", "dotnet"]
 
     steps:
       - uses: actions/checkout@v2
-      # Non root
+
+      # Build with non-root user
       - run: make ${{ matrix.name }}
-      # Root
+      # Build with root user
       - run: make ${{ matrix.name }} IMAGE_USER=root IMAGE_USERHOME=/root IMAGE_TAG=root
+
       - uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      # Non root
+
+      # Push non-root user image
       - run: make push IMAGE_NAME=${{ matrix.name }}
-      # Root
+      # Push root user image
       - run: make push IMAGE_NAME=${{ matrix.name }} IMAGE_TAG=root
-
-  build-node-image:
-    name: "Build & Push Node Image"
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      # Non root
-      - run: make node
-      # Root
-      - run: make node-root
-      - uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      # Non root
-      - run: make push IMAGE_NAME=node
-      # Root
-      - run: make push IMAGE_NAME=node IMAGE_TAG=root

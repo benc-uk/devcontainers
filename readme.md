@@ -1,12 +1,12 @@
-# Dev Containers
+# Generic Dev Containers
 
-This is my set of container images for use with [VS Code dev containers (aka VS Code Remote Containers)](https://code.visualstudio.com/docs/remote/containers), Codespaces and other uses such as runners for [nektos/act](https://github.com/nektos/act)
+This is my set of container images for use with [VS Code dev containers](https://code.visualstudio.com/docs/remote/containers) (aka remote containers), Codespaces and other uses such as runners for [nektos/act](https://github.com/nektos/act)
 
-All images are built on base images from the "official" set of dev container definitions: https://github.com/microsoft/vscode-dev-containers
+All images are built on base images from the Microsoft "official" set of dev container definitions: https://github.com/microsoft/vscode-dev-containers
 
 ## Contents
 
-Two versions of each image are available, one which runs as a non-root user and one which runs as root.
+Two versions of each image are available, one which runs as a non-root user (tagged as `:latest`) and one which runs as root (tagged `:root`).
 
 When working with VS Code dev containers the non-root version should be used, to prevent file ownership and permission issues.
 
@@ -20,9 +20,9 @@ When working with VS Code dev containers the non-root version should be used, to
 
 ## Installed tools
 
-The base images (from mcr<span>.microsoft.com/vscode/devcontainers) are all Debian based, with common packages already installed such as: jq, make, curl, wget, yarn, zsh, openssl, nettools, git
+The base images (from _mcr.<span>microsoft</span>.com/vscode/devcontainers_) are all Debian based, with common packages already installed such as: jq, make, curl, wget, yarn, zsh, openssl, net-tools, git
 
-Extra tools and packages are installed via the `scripts/install.sh` script
+On top of this, several extra tools and packages are installed via the `install.sh` script in this repo
 
 This script clones the https://github.com/benc-uk/tools-install repo which is a set of Debian/Ubuntu install scripts for common tools, SDKs etc, and runs the install scripts from that repo
 
@@ -37,4 +37,8 @@ This script clones the https://github.com/benc-uk/tools-install repo which is a 
 
 ## Using with nektos/act
 
-Use the `root` images only when using with act
+Use the `root` images only when using as a runner for act, e.g.
+
+```bash
+act push --platform ubuntu-latest=ghcr.io/benc-uk/devcontainers/go:root
+```
